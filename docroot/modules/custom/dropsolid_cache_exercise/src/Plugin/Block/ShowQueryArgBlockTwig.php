@@ -46,17 +46,11 @@ class ShowQueryArgBlockTwig extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    * Create a url with the following parameters: ?drop=notsosolid&change=unchanged
-   *
    */
   public function build() {
-
-    $elements['drop'] = [
-      '#markup' => $this->requestStack->getCurrentRequest()->query->get('drop'),
-    ];
-
-    $elements['change'] = [
-      '#markup' => $this->requestStack->getCurrentRequest()->query->get('change'),
-    ];
+    $elements = [];
+    $elements += $this->createMarkup('drop');
+    $elements += $this->createMarkup('change');
 
     $build = [];
     $build['show_query_arg_block_twig']['twig'] = [
@@ -65,7 +59,28 @@ class ShowQueryArgBlockTwig extends BlockBase implements ContainerFactoryPluginI
     ];
 
     return $build;
+  }
 
+  /**
+   * Returns a renderable array with the query string value.
+   *
+   * @param string $name
+   *   Name of the value to get.
+   *
+   * @return array
+   *   The renderable array.
+   */
+  private function createMarkup(string $name): array {
+    return [
+      $name => [
+        '#markup' => $this->requestStack->getCurrentRequest()->query->get($name),
+        '#cache' => [
+          'contexts' => [
+            "url.query_args:$name",
+          ],
+        ],
+      ],
+    ];
   }
 
 }
