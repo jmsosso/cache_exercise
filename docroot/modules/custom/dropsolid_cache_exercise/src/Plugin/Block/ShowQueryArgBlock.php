@@ -7,7 +7,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-
 /**
  * Provides a 'ShowQueryArgBlock' block.
  *
@@ -44,18 +43,22 @@ class ShowQueryArgBlock extends BlockBase implements ContainerFactoryPluginInter
     );
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function build() {
-
-    $drop = $this->requestStack->getCurrentRequest()->query->get('drop');
-
+    $drop  = $this->requestStack->getCurrentRequest()->query->get('drop');
     $build = [];
 
     if (isset($drop)) {
-      $build['show_query_arg_block']['#markup'] = "<h1>Drop-" . $drop . "</h1>";
+      $build['show_query_arg_block'] = [
+        '#markup' => "<h1>Drop-" . $drop . "</h1>",
+        '#cache' => [
+          'contexts' => [
+            'url.query_args:drop',
+          ],
+        ],
+      ];
     }
 
     return $build;
