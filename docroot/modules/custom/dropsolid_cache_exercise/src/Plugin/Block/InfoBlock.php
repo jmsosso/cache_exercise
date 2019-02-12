@@ -5,10 +5,8 @@ namespace Drupal\dropsolid_cache_exercise\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Drupal\Core\Cache\Cache;
 
 /**
  * Provides a 'InfoBlock' block.
@@ -46,23 +44,29 @@ class InfoBlock extends BlockBase implements ContainerFactoryPluginInterface {
     );
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function build() {
-    $build = [];
+    $items     = [];
+    $cacheTags = [];
+    $nodes     = $this->entityTypeManager->getStorage('node')->loadMultiple([1, 2]);
 
-    $nodes = $this->entityTypeManager->getStorage('node')->loadMultiple([1, 2]);
-    $build['nodes'] = [
-      '#theme' => 'item_list'
-    ];
     foreach ($nodes as $node) {
-      /** @var NodeInterface $node */
-      $build['nodes']['#items'][] = $node->label();
+      /** @var \Drupal\node\NodeInterface $node */
+      $items[] = $node->label();
+      $cacheTags = Cache::mergeTags($cacheTags, $node->getCacheTags());
     }
 
-    return $build;
+    return [
+      'nodes' => [
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#cache' => [
+          'tags' => $cacheTags,
+        ],
+      ],
+    ];
   }
 
 }
