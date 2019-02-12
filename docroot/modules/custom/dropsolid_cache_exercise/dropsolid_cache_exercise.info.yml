@@ -1,0 +1,5 @@
+name: Dropsolid Cache Exercise
+type: module
+description: Dropsolid Cache Exercise
+core: 8.x
+package: Dropsolid
