@@ -1,0 +1,3 @@
+{
+    "phpcs.standard": "./docroot/vendor/drupal/coder/coder_sniffer/Drupal"
+}
