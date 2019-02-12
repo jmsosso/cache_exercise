@@ -3,11 +3,11 @@
 namespace Drupal\dropsolid_cache_exercise\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Provides a 'LatestArticles' block.
@@ -70,7 +70,9 @@ class LatestArticles extends BlockBase implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function build() {
-    $build = [];
+    $build     = [];
+    $items     = [];
+    $cacheTags = [];
 
     $nids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->condition('type', 'article')
@@ -82,13 +84,19 @@ class LatestArticles extends BlockBase implements ContainerFactoryPluginInterfac
     if ($nids) {
       $nodes = $this->entityTypeManager->getStorage('node')
         ->loadMultiple($nids);
-      $build['nodes'] = [
-        '#theme' => 'item_list'
-      ];
-      // we don't use view modes, because then Drupal adds the cache tags on its own per node
+
+      // We don't use view modes, because then Drupal adds the cache tags on its own per node.
       foreach ($nodes as $node) {
-        $build['nodes']['#items'][] = $node->label();
+        $items[] = $node->label();
+        $cacheTags = Cache::mergeTags($cacheTags, $node->getCacheTags());
       }
+      $build['nodes'] = [
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#cache' => [
+          'tags' => $cacheTags,
+        ],
+      ];
     }
 
     return $build;
