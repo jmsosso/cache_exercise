@@ -36,11 +36,10 @@ You'll notice that when you change the parameter or any node title that the bloc
 If you have Docker installed in your machine you just need to run:
 
 ```
-docker-compose up -d drupal phpmyadmin mailcatcher
+docker-compose up -d drupal phpmyadmin
 ```
 
-To get the site running with phpMyAdmin and also a mail catcher tool.
+To get the site running with phpMyAdmin.
 
 - Drupal: http://localhost:8080/
 - phpMyAdmin: http://localhost:8081/
-- Mail Catcher: http://localhost:8082/
