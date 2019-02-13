@@ -37,7 +37,12 @@ If you have Docker installed in your machine you just need to run:
 
 ```
 docker-compose up -d drupal phpmyadmin
+composer install -d docroot/ --ignore-platform-reqs
+mkdir docroot/sites/default/files
+chmod -R a+w docroot/sites/default/files
 ```
+
+Note: The MySQL container can take some minutes to import the database.
 
 To get the site running with phpMyAdmin.
 

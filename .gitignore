@@ -15,7 +15,7 @@
 # docroot/vendor
 
 # Ignore configuration files that may contain sensitive information.
-docroot/sites/*/settings*.php
+#docroot/sites/*/settings*.php
 docroot/sites/*/services*.yml
 
 # Ignore paths that contain user-generated content.
@@ -43,4 +43,5 @@ docroot/sites/simpletest
 docroot/vendor
 
 # Ignore Docker volumes
-volumes
+volumes/*
+!volumes/dropsolid_cache_exercise.sql
